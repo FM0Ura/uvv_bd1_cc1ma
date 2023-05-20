@@ -1,16 +1,21 @@
+-- Comando para apagar o banco de dados, caso ele já exista na máquina.
+
+DROP DATABASE IF EXISTS uvv;
+
 --Comando para apagar o usuário, caso ele já exista na máquina.
 
 DROP USER IF EXISTS felipe_angelo;
+
+-- Comando para excluir, caso já exista um esquema com o mesmo nome já existir um schema com esse nome ele será apagado e criado um novo.
+
+DROP SCHEMA IF EXISTS lojas CASCADE;
 
 -- Comando para criar um usuário que, posteriormente, será o "dono" do banco de dados.
 
 CREATE USER felipe_angelo 
 WITH CREATEDB CREATEROLE
-     ENCRYPTED PASSWORD '13052101@Angelo';
+ENCRYPTED PASSWORD '13052101@Angelo';
 
--- Comando para apagar o banco de dados, caso ele já exista na máquina.
-
-DROP DATABASE IF EXISTS uvv;
 
 -- Comando para criar um banco de dados, cujo responsável é o usuário "felipe_angelo".
 
@@ -28,11 +33,8 @@ COMMENT ON DATABASE uvv IS 'Banco de dados para tratar de informações sobre a 
 
 -- Comando para trocar de usuário, para começar a trabalhar no banco de dados.
 
--- Como trocar de usuario?
+\c uvv felipe_angelo;
 
--- Comando para excluir, caso já exista um esquema com o mesmo nomee já existir um schema com esse nome ele será apagado e criado um novo.
-
-DROP SCHEMA IF EXISTS lojas CASCADE;
 
 -- Comando para criação de um esquema separado, cujo "dono" é felipe_angelo.
 
