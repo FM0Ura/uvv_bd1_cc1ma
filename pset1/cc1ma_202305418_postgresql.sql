@@ -1,3 +1,7 @@
+-- Comando para entrar no usuário postgres para criar o usuário que será o dono do banco de dados uvv e o próprio banco de dados uvv.
+
+\c "host=localhost user=postgres password=computacao@raiz";
+
 -- Comando para apagar o banco de dados, caso ele já exista na máquina.
 
 DROP DATABASE IF EXISTS uvv;
@@ -16,7 +20,6 @@ CREATE USER felipe_angelo
 WITH CREATEDB CREATEROLE
 ENCRYPTED PASSWORD '13052101@Angelo';
 
-
 -- Comando para criar um banco de dados, cujo responsável é o usuário "felipe_angelo".
 
 CREATE DATABASE uvv
@@ -29,7 +32,7 @@ CONNECTION LIMIT = -1;
 
 -- Comando para adicionar um comentário ao banco de dados, explicando sobre o que ele se trata.
 
-COMMENT ON DATABASE uvv IS 'Banco de dados para tratar de informações sobre a loja UVV e suas franquias';
+COMMENT ON DATABASE uvv IS 'Banco de dados para tratar de informações sobre a loja UVV e suas franquias.';
 
 -- Comando para trocar de usuário, para começar a trabalhar no banco de dados.
 
@@ -42,7 +45,7 @@ AUTHORIZATION felipe_angelo;
 
 -- Comando para comentar sobre o esquema criado.
 
-COMMENT ON SCHEMA lojas IS 'Esquema onde será organizado o banco de dados das lojas UVV';
+COMMENT ON SCHEMA lojas IS 'Esquema onde será organizado o banco de dados das lojas UVV.';
 
 -- Comando para mostrar em qual esquema está sendo utilizado como padrão.
 
@@ -75,21 +78,21 @@ CREATE TABLE lojas.lojas (
 
 -- Comando para fazer comentário sobre a tabela "loja", explicando o que há nela.
 
-COMMENT ON TABLE lojas.lojas IS 'Mostra informações sobre cada loja da franquia';
+COMMENT ON TABLE lojas.lojas IS 'Mostra informações sobre cada loja da franquia.';
 
 -- Comando para fazer comentários sobre as colunas da tabela "loja", explicando o que há de informação em cada coluna.
 
-COMMENT ON COLUMN lojas.lojas.loja_id IS 'Identifica cada loja da franquia por um número único';
-COMMENT ON COLUMN lojas.lojas.nome IS 'Mostra o nome específico de cada loja da franquia';
-COMMENT ON COLUMN lojas.lojas.endereco_web IS 'Identifica o endereço do site de cada loja, se houver um site da loja';
+COMMENT ON COLUMN lojas.lojas.loja_id IS 'Identifica cada loja da franquia por um número único.';
+COMMENT ON COLUMN lojas.lojas.nome IS 'Mostra o nome específico de cada loja da franquia.';
+COMMENT ON COLUMN lojas.lojas.endereco_web IS 'Identifica o endereço do site de cada loja, se houver um site da loja.';
 COMMENT ON COLUMN lojas.lojas.endereco_fisico IS 'Identifica o endereco fisico da loja, ou seja, em que lugar do mundo real a loja se encontra, se houver uma loja física.';
-COMMENT ON COLUMN lojas.lojas.latitude IS 'Mostra a latitude em que a loja se encontra no planeta';
-COMMENT ON COLUMN lojas.lojas.longitude IS 'Mostra a longitude em que a loja se encontra no planeta';
-COMMENT ON COLUMN lojas.lojas.logo IS 'Mostra o dado binário para gerar a imagem da logo da loja';
-COMMENT ON COLUMN lojas.lojas.logo_mime_type IS 'Mostra em qual extensão (ou formato) o arquivo da logo da loja está';
-COMMENT ON COLUMN lojas.lojas.logo_arquivo IS 'Identifica o nome do arquivo do logo de cada loja';
-COMMENT ON COLUMN lojas.lojas.logo_charset IS 'Identifica o conjunto de caracteres usado para codificar o logo da loja';
-COMMENT ON COLUMN lojas.lojas.logo_ultima_atualizacao IS 'Mostra a data em que houve a última alteração na logo da loja';
+COMMENT ON COLUMN lojas.lojas.latitude IS 'Mostra a latitude em que a loja se encontra no planeta.';
+COMMENT ON COLUMN lojas.lojas.longitude IS 'Mostra a longitude em que a loja se encontra no planeta.';
+COMMENT ON COLUMN lojas.lojas.logo IS 'Mostra o dado binário para gerar a imagem da logo da loja.';
+COMMENT ON COLUMN lojas.lojas.logo_mime_type IS 'Mostra em qual extensão (ou formato) o arquivo da logo da loja está.';
+COMMENT ON COLUMN lojas.lojas.logo_arquivo IS 'Identifica o nome do arquivo do logo de cada loja.';
+COMMENT ON COLUMN lojas.lojas.logo_charset IS 'Identifica o conjunto de caracteres usado para codificar o logo da loja.';
+COMMENT ON COLUMN lojas.lojas.logo_ultima_atualizacao IS 'Mostra a data em que houve a última alteração na logo da loja.';
 
 -- Comando para criar a restrição de, pelo menos, uma coluna de endereço (web ou fisíco) ser preenchida em uma inserção de dados.
 
@@ -107,7 +110,7 @@ ADD CONSTRAINT validacao_longitude CHECK (longitude >= -180 AND longitude <= 180
 -- Comando para criar a restrição na coluna de "latitude", sendo apenas válidos valores entre -90 e 90. 
 
 ALTER TABLE lojas.lojas
-ADD CONSTRAINT validacao_longitude CHECK (longitude >= -180 AND longitude <= 180);
+ADD CONSTRAINT validacao_latitude CHECK (latitude >= -90 AND latitude <= 90);
 
 -- Comando para criar a restrição na coluna de "logo_utilma_atualizacao", sendo apenas válidos datas iguais ou maiores que 01/01/2020. 
 
@@ -135,19 +138,19 @@ CREATE TABLE lojas.produtos (
 
 -- Comando para fazer comentário sobre a tabela "produtos", explicando o que há nela.
 
-COMMENT ON TABLE lojas.produtos IS 'Mostra informações dos produtos vendidos nas lojas';
+COMMENT ON TABLE lojas.produtos IS 'Mostra informações dos produtos vendidos nas lojas.';
 
 -- Comando para fazer comentário sobre as colunas da tabela "produto", explicando o que há de informação em cada coluna.
 
-COMMENT ON COLUMN lojas.produtos.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto';
-COMMENT ON COLUMN lojas.produtos.nome IS 'Mostra o nome do produto';
-COMMENT ON COLUMN lojas.produtos.preco_unitario IS 'Mostra por qual preço é vendido uma unidade do produto';
-COMMENT ON COLUMN lojas.produtos.detalhes IS 'Mostra alguns detalhes necessários sobre o produto';
-COMMENT ON COLUMN lojas.produtos.imagem IS 'Mostra uma sequência binária para gerar uma imagem do produto';
-COMMENT ON COLUMN lojas.produtos.imagem_mime_type IS 'Identifica o tipo de formato/extensão que a imagem do produto possui';
-COMMENT ON COLUMN lojas.produtos.imagem_arquivo IS 'Mostra o nome do arquivo da imagem do produto';
-COMMENT ON COLUMN lojas.produtos.imagem_charset IS 'Mostra o conjunto de caracteres usado para codificar a imagem do produto';
-COMMENT ON COLUMN lojas.produtos.imagem_ultima_atualizacao IS 'Mostra a data da última modificação feita na imagem do produto';
+COMMENT ON COLUMN lojas.produtos.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto.';
+COMMENT ON COLUMN lojas.produtos.nome IS 'Mostra o nome do produto.';
+COMMENT ON COLUMN lojas.produtos.preco_unitario IS 'Mostra por qual preço é vendido uma unidade do produto.';
+COMMENT ON COLUMN lojas.produtos.detalhes IS 'Mostra alguns detalhes necessários sobre o produto.';
+COMMENT ON COLUMN lojas.produtos.imagem IS 'Mostra uma sequência binária para gerar uma imagem do produto.';
+COMMENT ON COLUMN lojas.produtos.imagem_mime_type IS 'Identifica o tipo de formato/extensão que a imagem do produto possui.';
+COMMENT ON COLUMN lojas.produtos.imagem_arquivo IS 'Mostra o nome do arquivo da imagem do produto.';
+COMMENT ON COLUMN lojas.produtos.imagem_charset IS 'Mostra o conjunto de caracteres usado para codificar a imagem do produto.';
+COMMENT ON COLUMN lojas.produtos.imagem_ultima_atualizacao IS 'Mostra a data da última modificação feita na imagem do produto.';
 
 -- Comando para restringir a coluna "preco_unitario" para que não aceite valores negativos.
 
@@ -178,16 +181,16 @@ CREATE TABLE lojas.clientes (
 
 -- Comando para adicionar um comemtário na tabela "clientes", explicando o que há nessa tabela.
 
-COMMENT ON TABLE lojas.clientes IS 'Mostra informações de todos os clientes da loja';
+COMMENT ON TABLE lojas.clientes IS 'Mostra informações de todos os clientes da loja.';
 
 -- Comando para adicionar um comentário nas colunas da tabela "clientes", explicando o que há de informação em cada coluna.
 
-COMMENT ON COLUMN lojas.clientes.cliente_id IS 'Mostra o identificador único de cada cliente';
-COMMENT ON COLUMN lojas.clientes.email IS 'Mostra qual o email cadastrado pelo cliente para contato';
-COMMENT ON COLUMN lojas.clientes.nome IS 'Mostra qual o nome completo do cliente';
-COMMENT ON COLUMN lojas.clientes.telefone1 IS 'Mostra o primeiro telefone cadastrado pelo cliente para contato';
-COMMENT ON COLUMN lojas.clientes.telefone2 IS 'Mostra o segundo telefone cadastrado pelo cliente para contato';
-COMMENT ON COLUMN lojas.clientes.telefone3 IS 'Mostra o terceiro telefone cadastrado pelo cliente para contato';
+COMMENT ON COLUMN lojas.clientes.cliente_id IS 'Mostra o identificador único de cada cliente.';
+COMMENT ON COLUMN lojas.clientes.email IS 'Mostra qual o email cadastrado pelo cliente para contato.';
+COMMENT ON COLUMN lojas.clientes.nome IS 'Mostra qual o nome completo do cliente.';
+COMMENT ON COLUMN lojas.clientes.telefone1 IS 'Mostra o primeiro telefone cadastrado pelo cliente para contato.';
+COMMENT ON COLUMN lojas.clientes.telefone2 IS 'Mostra o segundo telefone cadastrado pelo cliente para contato.';
+COMMENT ON COLUMN lojas.clientes.telefone3 IS 'Mostra o terceiro telefone cadastrado pelo cliente para contato.';
 
 -- Comando para restringir a coluna "email" para que possua, obrigatoriamente, o caracter especial "@".
 
@@ -225,14 +228,14 @@ CREATE TABLE lojas.estoques (
 
 -- Comando para adicionar um comentário à tabela "estoques", explicando o que há nela.
 
-COMMENT ON TABLE lojas.estoques IS 'Mostra o controle de estoque das lojas UVV';
+COMMENT ON TABLE lojas.estoques IS 'Mostra o controle de estoque das lojas UVV.';
 
 -- Comando para adicionar comentários nas colunas da tabela "estoques", explicando quais tipos de informações há em cada coluna.
 
-COMMENT ON COLUMN lojas.estoques.estoque_id IS 'Mostra o identificador primário de cada estoque';
-COMMENT ON COLUMN lojas.estoques.quantidade IS 'Mostra a quantidade de produtos no estoque';
-COMMENT ON COLUMN lojas.estoques.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos';
-COMMENT ON COLUMN lojas.estoques.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto';
+COMMENT ON COLUMN lojas.estoques.estoque_id IS 'Mostra o identificador primário de cada estoque.';
+COMMENT ON COLUMN lojas.estoques.quantidade IS 'Mostra a quantidade de produtos no estoque.';
+COMMENT ON COLUMN lojas.estoques.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos.';
+COMMENT ON COLUMN lojas.estoques.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto.';
 
 -- Comando para criar uma restrição que impede que a coluna "quantidade" aceite valores negativos.
 
@@ -274,15 +277,15 @@ CREATE TABLE lojas.envios (
 
 -- Comando para adicionar um comentário na tabela "envios" para explicar o que há nela.
 
-COMMENT ON TABLE lojas.envios IS 'Mostra informações para o processo de envios do produto';
+COMMENT ON TABLE lojas.envios IS 'Mostra informações para o processo de envios do produto.';
 
 -- Comando para adicionar comentários nas colunas da tabela "envios", explicando quais tipos de informações há em cada coluna.
 
-COMMENT ON COLUMN lojas.envios.envio_id IS 'Mostra o identificador único de cada envios';
-COMMENT ON COLUMN lojas.envios.cliente_id IS 'Mostra o identificador único de cada cliente';
-COMMENT ON COLUMN lojas.envios.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos';
-COMMENT ON COLUMN lojas.envios.endereco_entrega IS 'Mostra para qual endereço o pedido do cliente está sendo levado';
-COMMENT ON COLUMN lojas.envios.status IS 'Mostra se o produto está no estado no processo de entrega o produto está';
+COMMENT ON COLUMN lojas.envios.envio_id IS 'Mostra o identificador único de cada envio.';
+COMMENT ON COLUMN lojas.envios.cliente_id IS 'Mostra o identificador único de cada cliente.';
+COMMENT ON COLUMN lojas.envios.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos.';
+COMMENT ON COLUMN lojas.envios.endereco_entrega IS 'Mostra para qual endereço o pedido do cliente está sendo levado.';
+COMMENT ON COLUMN lojas.envios.status IS 'Mostra qual é o estado do produto no processo de entrega.';
 
 -- Comando para restringir as opções do status da tabela de "envios".
 
@@ -334,15 +337,15 @@ ADD CONSTRAINT check_data_hora_format CHECK (TO_CHAR(data_hora, 'DD-MM-YYYY') = 
 
 -- Comando para adicionar comentário na tabela "pedidos", explicando o que há nela.
 
-COMMENT ON TABLE lojas.pedidos IS 'Mostra informações sobre os pedidos feitas em cada loja';
+COMMENT ON TABLE lojas.pedidos IS 'Mostra informações sobre os pedidos feitas em cada loja.';
 
 -- Comando para adicionar comentários nas colunas da tabela "pedidos", explicando quais informações há em cada coluna.
 
-COMMENT ON COLUMN lojas.pedidos.pedido_id IS 'Mostra o identificador único de cada pedido feito na loja';
-COMMENT ON COLUMN lojas.pedidos.data_hora IS 'Identifica em que dia e hora o clientes fez o pedido do produto';
-COMMENT ON COLUMN lojas.pedidos.status IS 'Mostra se o produto está no estado de produção, envios ou se já foi entregue ao cliente';
-COMMENT ON COLUMN lojas.pedidos.cliente_id IS 'Mostra o identificador único de cada cliente';
-COMMENT ON COLUMN lojas.pedidos.loja_id IS 'Identifica cada loja da franquia por um número único';
+COMMENT ON COLUMN lojas.pedidos.pedido_id IS 'Mostra o identificador único de cada pedido feito na loja.';
+COMMENT ON COLUMN lojas.pedidos.data_hora IS 'Identifica em que dia e hora o clientes fez o pedido do produto.';
+COMMENT ON COLUMN lojas.pedidos.status IS 'Mostra se o produto está no estado de produção, envios ou se já foi entregue ao cliente.';
+COMMENT ON COLUMN lojas.pedidos.cliente_id IS 'Mostra o identificador único de cada cliente.';
+COMMENT ON COLUMN lojas.pedidos.loja_id IS 'Identifica cada loja da franquia por um número único.';
 
 -- Comando para criar um relacionamento entre as tabelas "pedidos" e "clientes", no qual a tabela pai é "clientes" e a tabela filho é "pedidos".
 
@@ -380,13 +383,13 @@ CREATE TABLE lojas.pedidos_itens (
 
 -- Comando para adicionar comentários na tabela, explicando sobre quais são as informações dela.
 
-COMMENT ON TABLE lojas.pedidos_itens IS 'Mostra quais produtos foram requistidos por cada ordem de pedido';
+COMMENT ON TABLE lojas.pedidos_itens IS 'Mostra quais produtos foram requistidos por cada ordem de pedido.';
 
 -- Comando para adicionar comentários nas colunas da tabela, explicando quais são as informações em cada coluna.
 
-COMMENT ON COLUMN lojas.pedidos_itens.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto';
-COMMENT ON COLUMN lojas.pedidos_itens.pedido_id IS 'Mostra o identificador único de cada pedido feito na loja';
-COMMENT ON COLUMN lojas.pedidos_itens.numero_da_linha IS '?????';
+COMMENT ON COLUMN lojas.pedidos_itens.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto.';
+COMMENT ON COLUMN lojas.pedidos_itens.pedido_id IS 'Mostra o identificador único de cada pedido feito na loja.';
+COMMENT ON COLUMN lojas.pedidos_itens.numero_da_linha IS 'Mostra qual o número de linha específico do produto da loja UVV que o cliente pediu.';
 COMMENT ON COLUMN lojas.pedidos_itens.preco_unitario IS 'Mostra o preço pago pelo cliente ao comprar cada unidade dos produtos na ordem';
 COMMENT ON COLUMN lojas.pedidos_itens.quantidade IS 'Mostra a quantidade de unidades pedida pelo cliente em sua ordem';
 COMMENT ON COLUMN lojas.pedidos_itens.envio_id IS 'Mostra o identificador único de cada envios';
