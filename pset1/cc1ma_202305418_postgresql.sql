@@ -19,13 +19,13 @@ ENCRYPTED PASSWORD '13052101@Angelo';
 
 -- Comando para criar um banco de dados, cujo responsável é o usuário "felipe_angelo".
 
-CREATE DATABASE         uvv
-OWNER =                 felipe_angelo
-TEMPLATE =              template0
-ENCODING =              'UTF8'
-LC_COLLATE =            'pt_BR.UTF-8'
-LC_CTYPE =              'pt_BR.UTF-8'
-CONNECTION LIMIT =      -1;
+CREATE DATABASE uvv
+OWNER = felipe_angelo
+TEMPLATE = template0
+ENCODING = 'UTF8'
+LC_COLLATE = 'pt_BR.UTF-8'
+LC_CTYPE = 'pt_BR.UTF-8'
+CONNECTION LIMIT = -1;
 
 -- Comando para adicionar um comentário ao banco de dados, explicando sobre o que ele se trata.
 
@@ -33,13 +33,12 @@ COMMENT ON DATABASE uvv IS 'Banco de dados para tratar de informações sobre a 
 
 -- Comando para trocar de usuário, para começar a trabalhar no banco de dados.
 
-\c uvv felipe_angelo;
-
+\c "host=localhost dbname=uvv user=felipe_angelo password=13052101@Angelo";
 
 -- Comando para criação de um esquema separado, cujo "dono" é felipe_angelo.
 
-CREATE SCHEMA  lojas 
-AUTHORIZATION  felipe_angelo;
+CREATE SCHEMA lojas 
+AUTHORIZATION felipe_angelo;
 
 -- Comando para comentar sobre o esquema criado.
 
@@ -57,7 +56,7 @@ SET SEARCH_PATH TO lojas;
 
 DROP TABLE IF EXISTS lojas.lojas;
 
--- Comando para criar a tabela (entidade) "loja" com informações relevantes sobre as lojas da franquia 
+-- Comando para criar a tabela (entidade) "loja" com informações relevantes sobre as lojas da franquia, além de restringir uma coluna como chave-primária da tabela. 
 
 CREATE TABLE lojas.lojas (
                 loja_id NUMERIC(38) NOT NULL,
@@ -92,14 +91,34 @@ COMMENT ON COLUMN lojas.lojas.logo_arquivo IS 'Identifica o nome do arquivo do l
 COMMENT ON COLUMN lojas.lojas.logo_charset IS 'Identifica o conjunto de caracteres usado para codificar o logo da loja';
 COMMENT ON COLUMN lojas.lojas.logo_ultima_atualizacao IS 'Mostra a data em que houve a última alteração na logo da loja';
 
+-- Comando para criar a restrição de, pelo menos, uma coluna de endereço (web ou fisíco) ser preenchida em uma inserção de dados.
 
+ALTER TABLE lojas.lojas
+ADD CONSTRAINT verficacao_endereco CHECK (
+  (endereco_web IS NOT NULL AND endereco_web != '') OR
+  (endereco_fisico IS NOT NULL AND endereco_fisico != '')
+);
+
+-- Comando para criar a restrição na coluna de "longitude", sendo apenas válidos valores entre -180 e 180. 
+
+ALTER TABLE lojas.lojas
+ADD CONSTRAINT validacao_longitude CHECK (longitude >= -180 AND longitude <= 180);
+
+-- Comando para criar a restrição na coluna de "latitude", sendo apenas válidos valores entre -90 e 90. 
+
+ALTER TABLE lojas.lojas
+ADD CONSTRAINT validacao_longitude CHECK (longitude >= -180 AND longitude <= 180);
+
+-- Comando para criar a restrição na coluna de "logo_utilma_atualizacao", sendo apenas válidos datas iguais ou maiores que 01/01/2020. 
+
+ALTER TABLE lojas.lojas
+ADD CONSTRAINT validacao_data_logo_ultima_atualizacao CHECK (logo_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
 
 -- Comando para excluir a tabela produtos, caso ela já exista.
 
 DROP TABLE IF EXISTS lojas.produtos;
 
-
--- Comando para criação da tabela (entidade) "produto" com informações relevantes sobre os produtos vendido pelas lojas da franquia.
+-- Comando para criação da tabela (entidade) "produto" com informações relevantes sobre os produtos vendido pelas lojas da franquia, além de criar uma restrição para que a coluna "produto_id" seja a chave-primária da tabela.
 
 CREATE TABLE lojas.produtos (
                 produto_id NUMERIC(38) NOT NULL,
@@ -130,13 +149,22 @@ COMMENT ON COLUMN lojas.produtos.imagem_arquivo IS 'Mostra o nome do arquivo da 
 COMMENT ON COLUMN lojas.produtos.imagem_charset IS 'Mostra o conjunto de caracteres usado para codificar a imagem do produto';
 COMMENT ON COLUMN lojas.produtos.imagem_ultima_atualizacao IS 'Mostra a data da última modificação feita na imagem do produto';
 
+-- Comando para restringir a coluna "preco_unitario" para que não aceite valores negativos.
+
+ALTER TABLE lojas.produtos
+ADD CONSTRAINT validacao_preco_unitario_positivo CHECK (preco_unitario >= 0);
+
+-- Comando para restringir a coluna "imagem_ultima_atualizacao" para que a data minima seja 1/1/2020.
+
+ALTER TABLE lojas.produtos
+ADD CONSTRAINT validacao_data_imagem_ultima_atualizacao CHECK (imagem_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
 
 -- Comando para excluir a tabela clientes, caso ela já exista.
 
 DROP TABLE IF EXISTS lojas.clientes;
 
 
--- Comando para criação da tabela "clientes" com informações relevantes sobre os clientes das lojas.
+-- Comando para criação da tabela "clientes" com informações relevantes sobre os clientes das lojas, além disso restringe a coluna "cliente_id" como chave-primária da tabela.
 
 CREATE TABLE lojas.clientes (
                 cliente_id NUMERIC(38) NOT NULL,
@@ -152,7 +180,7 @@ CREATE TABLE lojas.clientes (
 
 COMMENT ON TABLE lojas.clientes IS 'Mostra informações de todos os clientes da loja';
 
--- Comando para adicionar um comentário nas colunas da tabela "clientes", explicando o que há de informação em cada coluna
+-- Comando para adicionar um comentário nas colunas da tabela "clientes", explicando o que há de informação em cada coluna.
 
 COMMENT ON COLUMN lojas.clientes.cliente_id IS 'Mostra o identificador único de cada cliente';
 COMMENT ON COLUMN lojas.clientes.email IS 'Mostra qual o email cadastrado pelo cliente para contato';
@@ -161,13 +189,31 @@ COMMENT ON COLUMN lojas.clientes.telefone1 IS 'Mostra o primeiro telefone cadast
 COMMENT ON COLUMN lojas.clientes.telefone2 IS 'Mostra o segundo telefone cadastrado pelo cliente para contato';
 COMMENT ON COLUMN lojas.clientes.telefone3 IS 'Mostra o terceiro telefone cadastrado pelo cliente para contato';
 
+-- Comando para restringir a coluna "email" para que possua, obrigatoriamente, o caracter especial "@".
+
+ALTER TABLE lojas.clientes
+ADD CONSTRAINT verificacao_formato_email CHECK (email LIKE '%@%');
+
+-- Comando para restringir as colunas "telefone1", "telefone2" e "telefone3", para que não aceite os caracteres "-", "(" e ")"
+
+-- Restrição para telefone1
+ALTER TABLE lojas.clientes
+ADD CONSTRAINT formato_telefone1 CHECK (telefone1 NOT LIKE '%-%' AND telefone1 NOT LIKE '%(%' AND telefone1 NOT LIKE '%)%');
+
+-- Restrição para telefone2
+ALTER TABLE lojas.clientes
+ADD CONSTRAINT formato_telefone2 CHECK (telefone2 NOT LIKE '%-%' AND telefone2 NOT LIKE '%(%' AND telefone2 NOT LIKE '%)%');
+
+-- Restrição para telefone3
+ALTER TABLE lojas.clientes
+ADD CONSTRAINT formato_telefone3 CHECK (telefone3 NOT LIKE '%-%' AND telefone3 NOT LIKE '%(%' AND telefone3 NOT LIKE '%)%');
+
 
 -- Comando para excluir a tabela estoques, caso ela já exista.
 
 DROP TABLE IF EXISTS lojas.estoques;
 
-
--- Comando para criação da tabela "estoques" com informações relevantes sobre os estoques de produtos das lojas.
+-- Comando para criação da tabela "estoques" com informações relevantes sobre os estoques de produtos das lojas, além de adicionar a coluna "estoque_id" como chave-primária da tabela.
 
 CREATE TABLE lojas.estoques (
                 estoque_id NUMERIC(38) NOT NULL,
@@ -188,6 +234,11 @@ COMMENT ON COLUMN lojas.estoques.quantidade IS 'Mostra a quantidade de produtos 
 COMMENT ON COLUMN lojas.estoques.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos';
 COMMENT ON COLUMN lojas.estoques.produto_id IS 'Identifica o identificador exclusivo de cada tipo de produto';
 
+-- Comando para criar uma restrição que impede que a coluna "quantidade" aceite valores negativos.
+
+ALTER TABLE lojas.estoques
+ADD CONSTRAINT verificacao_quantidade_positivo CHECK (quantidade >= 0);
+
 -- Comando para criar um relacionamento entre as tabelas "estoques" e "produtos", no qual a tabela pai é "produtos" e a tabela filho é "estoques".
 
 ALTER TABLE lojas.estoques ADD CONSTRAINT produto_estoques_fk
@@ -206,13 +257,11 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-
 -- Comando para excluir a tabela envios, caso ela já exista.
 
 DROP TABLE IF EXISTS lojas.envios;
 
-
--- Comando para criação da tabela "envios" com informações relevantes para o processo de envio de mercadorias.
+-- Comando para criação da tabela "envios" com informações relevantes para o processo de envio de mercadorias, além de adicionar a coluna "envio_id" como chave-primária da tabela.
 
 CREATE TABLE lojas.envios (
                 envio_id NUMERIC(38) NOT NULL,
@@ -234,6 +283,11 @@ COMMENT ON COLUMN lojas.envios.cliente_id IS 'Mostra o identificador único de c
 COMMENT ON COLUMN lojas.envios.loja_id IS 'Identifica cada loja da franquia por um número único de até 38 dígitos';
 COMMENT ON COLUMN lojas.envios.endereco_entrega IS 'Mostra para qual endereço o pedido do cliente está sendo levado';
 COMMENT ON COLUMN lojas.envios.status IS 'Mostra se o produto está no estado no processo de entrega o produto está';
+
+-- Comando para restringir as opções do status da tabela de "envios".
+
+ALTER TABLE lojas.envios 
+ADD CONSTRAINT check_status CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
 
 -- Comando para criar um relacionamento entre as tabelas "envios" e "clientes", no qual a tabela pai é "clientes" e a tabela filho é "envios".
 
@@ -257,8 +311,7 @@ NOT DEFERRABLE;
 
 DROP TABLE IF EXISTS lojas.pedidos;
 
-
--- Comando para criação da tabela "pedidos" a qual possui informações relevantes sobre os pedidos feitos pelos clientes.
+-- Comando para criação da tabela "pedidos" a qual possui informações relevantes sobre os pedidos feitos pelos clientes, além de definir a coluna "pedido_id" como a chave-primária da tabela.
 
 CREATE TABLE lojas.pedidos (
                 pedido_id NUMERIC(38) NOT NULL,
@@ -268,6 +321,16 @@ CREATE TABLE lojas.pedidos (
                 loja_id NUMERIC(38) NOT NULL,
                 CONSTRAINT pedido_id PRIMARY KEY (pedido_id)
 );
+
+-- Comando para restringir as opções do status da tabela de "pedidos".
+
+ALTER TABLE lojas.pedidos
+ADD CONSTRAINT valicacao_status_pedidos CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
+
+-- Comando para restringir o formato em que é adicionada a data.
+
+ALTER TABLE lojas.pedidos
+ADD CONSTRAINT check_data_hora_format CHECK (TO_CHAR(data_hora, 'DD-MM-YYYY') = TO_CHAR(data_hora, 'DD-MM-YYYY'));
 
 -- Comando para adicionar comentário na tabela "pedidos", explicando o que há nela.
 
@@ -299,11 +362,9 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-
 -- Comando para excluir a tabela pedidos_itens, caso ela já exista.
 
 DROP TABLE IF EXISTS lojas.pedidos_itens;
-
 
 -- Comando para criação da tabela "pedidos_itens", a qual possui informações relevanes sobre os itens de uma ordem do cliente. 
 
@@ -330,6 +391,16 @@ COMMENT ON COLUMN lojas.pedidos_itens.preco_unitario IS 'Mostra o preço pago pe
 COMMENT ON COLUMN lojas.pedidos_itens.quantidade IS 'Mostra a quantidade de unidades pedida pelo cliente em sua ordem';
 COMMENT ON COLUMN lojas.pedidos_itens.envio_id IS 'Mostra o identificador único de cada envios';
 
+-- Comando para restringir a coluna "preco_unitario" para que não aceite valores negativos.
+
+ALTER TABLE lojas.pedidos_itens
+ADD CONSTRAINT validacao_preco_unitario_positivo CHECK (preco_unitario >= 0);
+
+-- Comando para restringir a coluna "quantidade" para que não aceite valores negativos.
+
+ALTER TABLE lojas.pedidos_itens
+ADD CONSTRAINT validacao_quantidade_positiva CHECK (quantidade >= 0);
+
 -- Comando para criar um relacionamento entre as tabelas "pedidos_itens" e "produtos", no qual a tabela filho é "pedidos_itens" e a tabela pai é "produtos".
 
 ALTER TABLE lojas.pedidos_itens ADD CONSTRAINT produto_pedidos_itens_fk
@@ -341,15 +412,6 @@ NOT DEFERRABLE;
 
 -- Comando para criar um relacionamento entre as tabelas "pedidos_itens" e "envios", no qual a tabela filho é "pedidos_itens" e a tabela pai é "envios".
 
-ALTER TABLE lojas.pedidos_itens ADD CONSTRAINT envio_pedidos_itens_fk
-FOREIGN KEY (envio_id)
-REFERENCES lojas.envios (envio_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
--- Comando para criar um relacionamento entre as tabelas "pedidos_itens" e "pedidos", no qual a tabela pai é "pedidos" e a tabela pai é "pedidos_itens".
-
 ALTER TABLE lojas.pedidos_itens ADD CONSTRAINT pedidos_pedidos_itens_fk
 FOREIGN KEY (pedido_id)
 REFERENCES lojas.pedidos (pedido_id)
@@ -357,11 +419,14 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+-- Comando para criar um relacionamento entre as tabelas "pedidos_itens" e "pedidos", no qual a tabela pai é "pedidos" e a tabela pai é "pedidos_itens".
 
-
-
-
-
+ALTER TABLE lojas.pedidos_itens ADD CONSTRAINT envios_pedidos_itens_fk
+FOREIGN KEY (envio_id)
+REFERENCES lojas.envios (envio_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
 
 
 
