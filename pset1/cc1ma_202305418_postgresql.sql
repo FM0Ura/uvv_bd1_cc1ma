@@ -1,7 +1,3 @@
--- Comando para entrar no usuário postgres para criar o usuário que será o dono do banco de dados uvv e o próprio banco de dados uvv.
-
-\c "host=localhost user=postgres password=computacao@raiz";
-
 -- Comando para apagar o banco de dados, caso ele já exista na máquina.
 
 DROP DATABASE IF EXISTS uvv;
