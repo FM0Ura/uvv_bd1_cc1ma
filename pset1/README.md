@@ -5,7 +5,7 @@
 Esse diretório é destinado ao *upload* de arquivos referentes ao primeiro PSET da disciplina de Banco de Dados.
 Todas as práticas do projeto estarão nesse diretório.
 
-Nesse PSET foi confeccionado a criação de um projeto lógico de banco de dados para a fictícia lojas UVV. Nele foram necessários o empregado dos conhecimentos sobre relacionamentos, restrições e cardinalidades de tabelas de banco de dados.
+Nesse PSET foi confeccionado a criação de um projeto lógico de banco de dados para a fictícia lojas UVV. Nele foram necessários o emprego dos conhecimentos sobre relacionamentos, restrições e cardinalidades de tabelas de banco de dados.
 
 ##  Desenvolvimento:
 
@@ -22,3 +22,5 @@ O script da criação do banco de dados foi criado utilizando o software **Visua
 | **cc1ma_202305418_postgresql.architect** | *Modelo lógico editável* |
 | **cc1ma_202305418_postgresql.pdf** | *Modelo lógico não editável* |
 | **cc1ma_202305418_postgresql.sql** | *Script para a criação do BD* |
+
+
