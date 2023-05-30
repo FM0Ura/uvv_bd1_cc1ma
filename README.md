@@ -1,7 +1,4 @@
-# uvv_bd1_cc1ma
-## Trabalhos e Atividades da disciplina de Banco de Dados I
-
-
+# Repositório projetos Banco de Dados I
 
 ### O que há nesse repositório?
 
