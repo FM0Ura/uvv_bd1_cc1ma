@@ -1,4 +1,4 @@
-# Repositório projetos Banco de Dados I
+# Projetos - Banco de Dados I
 
 ### O que há nesse repositório?
 
