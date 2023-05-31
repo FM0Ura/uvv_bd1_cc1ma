@@ -69,7 +69,7 @@ CREATE TABLE lojas.lojas (
                 logo_arquivo VARCHAR(512),
                 logo_charset VARCHAR(512),
                 logo_ultima_atualizacao DATE,
-                CONSTRAINT loja_id PRIMARY KEY (loja_id)
+                CONSTRAINT pk_loja_id PRIMARY KEY (loja_id)
 );
 
 -- Comando para fazer comentário sobre a tabela "loja", explicando o que há nela.
@@ -93,7 +93,7 @@ COMMENT ON COLUMN lojas.lojas.logo_ultima_atualizacao IS 'Mostra a data em que h
 -- Comando para criar a restrição de, pelo menos, uma coluna de endereço (web ou fisíco) ser preenchida em uma inserção de dados.
 
 ALTER TABLE lojas.lojas
-ADD CONSTRAINT verficacao_endereco CHECK (
+ADD CONSTRAINT lojas_endereco_fisico_endereco_web_check CHECK (
   (endereco_web IS NOT NULL AND endereco_web != '') OR
   (endereco_fisico IS NOT NULL AND endereco_fisico != '')
 );
@@ -101,17 +101,17 @@ ADD CONSTRAINT verficacao_endereco CHECK (
 -- Comando para criar a restrição na coluna de "longitude", sendo apenas válidos valores entre -180 e 180. 
 
 ALTER TABLE lojas.lojas
-ADD CONSTRAINT validacao_longitude CHECK (longitude >= -180 AND longitude <= 180);
+ADD CONSTRAINT lojas_longitude_check CHECK (longitude >= -180 AND longitude <= 180);
 
 -- Comando para criar a restrição na coluna de "latitude", sendo apenas válidos valores entre -90 e 90. 
 
 ALTER TABLE lojas.lojas
-ADD CONSTRAINT validacao_latitude CHECK (latitude >= -90 AND latitude <= 90);
+ADD CONSTRAINT lojas_latitude_check CHECK (latitude >= -90 AND latitude <= 90);
 
 -- Comando para criar a restrição na coluna de "logo_utilma_atualizacao", sendo apenas válidos datas iguais ou maiores que 01/01/2020. 
 
 ALTER TABLE lojas.lojas
-ADD CONSTRAINT validacao_data_logo_ultima_atualizacao CHECK (logo_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
+ADD CONSTRAINT lojas_logo_ultima_atualizacao_check CHECK (logo_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
 
 -- Comando para excluir a tabela produtos, caso ela já exista.
 
@@ -129,7 +129,7 @@ CREATE TABLE lojas.produtos (
                 imagem_arquivo VARCHAR(512),
                 imagem_charset VARCHAR(512),
                 imagem_ultima_atualizacao DATE,
-                CONSTRAINT produto_id PRIMARY KEY (produto_id)
+                CONSTRAINT produtos_produto_id_pk PRIMARY KEY (produto_id)
 );
 
 -- Comando para fazer comentário sobre a tabela "produtos", explicando o que há nela.
@@ -151,12 +151,12 @@ COMMENT ON COLUMN lojas.produtos.imagem_ultima_atualizacao IS 'Mostra a data da 
 -- Comando para restringir a coluna "preco_unitario" para que não aceite valores negativos.
 
 ALTER TABLE lojas.produtos
-ADD CONSTRAINT validacao_preco_unitario_positivo CHECK (preco_unitario >= 0);
+ADD CONSTRAINT produtos_preco_unitario_check CHECK (preco_unitario >= 0);
 
 -- Comando para restringir a coluna "imagem_ultima_atualizacao" para que a data minima seja 1/1/2020.
 
 ALTER TABLE lojas.produtos
-ADD CONSTRAINT validacao_data_imagem_ultima_atualizacao CHECK (imagem_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
+ADD CONSTRAINT produtos_imagem_ultima_atualizacao_check CHECK (imagem_ultima_atualizacao >= TO_DATE('01-01-2020', 'DD-MM-YYYY'));
 
 -- Comando para excluir a tabela clientes, caso ela já exista.
 
@@ -172,7 +172,7 @@ CREATE TABLE lojas.clientes (
                 telefone1 VARCHAR(20),
                 telefone2 VARCHAR(20),
                 telefone3 VARCHAR(20),
-                CONSTRAINT cliente_id PRIMARY KEY (cliente_id)
+                CONSTRAINT clientes_cliente_id_pk PRIMARY KEY (cliente_id)
 );
 
 -- Comando para adicionar um comemtário na tabela "clientes", explicando o que há nessa tabela.
@@ -191,21 +191,21 @@ COMMENT ON COLUMN lojas.clientes.telefone3 IS 'Mostra o terceiro telefone cadast
 -- Comando para restringir a coluna "email" para que possua, obrigatoriamente, o caracter especial "@".
 
 ALTER TABLE lojas.clientes
-ADD CONSTRAINT verificacao_formato_email CHECK (email LIKE '%@%');
+ADD CONSTRAINT clientes_email_check CHECK (email LIKE '%@%');
 
 -- Comando para restringir as colunas "telefone1", "telefone2" e "telefone3", para que não aceite os caracteres "-", "(" e ")"
 
 -- Restrição para telefone1
 ALTER TABLE lojas.clientes
-ADD CONSTRAINT formato_telefone1 CHECK (telefone1 NOT LIKE '%-%' AND telefone1 NOT LIKE '%(%' AND telefone1 NOT LIKE '%)%');
+ADD CONSTRAINT clientes_telefone1_check CHECK (telefone1 NOT LIKE '%-%' AND telefone1 NOT LIKE '%(%' AND telefone1 NOT LIKE '%)%');
 
 -- Restrição para telefone2
 ALTER TABLE lojas.clientes
-ADD CONSTRAINT formato_telefone2 CHECK (telefone2 NOT LIKE '%-%' AND telefone2 NOT LIKE '%(%' AND telefone2 NOT LIKE '%)%');
+ADD CONSTRAINT clientes_telefone2_check CHECK (telefone2 NOT LIKE '%-%' AND telefone2 NOT LIKE '%(%' AND telefone2 NOT LIKE '%)%');
 
 -- Restrição para telefone3
 ALTER TABLE lojas.clientes
-ADD CONSTRAINT formato_telefone3 CHECK (telefone3 NOT LIKE '%-%' AND telefone3 NOT LIKE '%(%' AND telefone3 NOT LIKE '%)%');
+ADD CONSTRAINT clientes_telefone3_check CHECK (telefone3 NOT LIKE '%-%' AND telefone3 NOT LIKE '%(%' AND telefone3 NOT LIKE '%)%');
 
 
 -- Comando para excluir a tabela estoques, caso ela já exista.
@@ -219,7 +219,7 @@ CREATE TABLE lojas.estoques (
                 quantidade NUMERIC(38) NOT NULL,
                 loja_id NUMERIC(38) NOT NULL,
                 produto_id NUMERIC(38) NOT NULL,
-                CONSTRAINT estoque_id PRIMARY KEY (estoque_id)
+                CONSTRAINT estoques_estoque_id_pk PRIMARY KEY (estoque_id)
 );
 
 -- Comando para adicionar um comentário à tabela "estoques", explicando o que há nela.
@@ -236,7 +236,7 @@ COMMENT ON COLUMN lojas.estoques.produto_id IS 'Identifica o identificador exclu
 -- Comando para criar uma restrição que impede que a coluna "quantidade" aceite valores negativos.
 
 ALTER TABLE lojas.estoques
-ADD CONSTRAINT verificacao_quantidade_positivo CHECK (quantidade >= 0);
+ADD CONSTRAINT estoques_quantidade_check CHECK (quantidade >= 0);
 
 -- Comando para criar um relacionamento entre as tabelas "estoques" e "produtos", no qual a tabela pai é "produtos" e a tabela filho é "estoques".
 
@@ -268,7 +268,7 @@ CREATE TABLE lojas.envios (
                 loja_id NUMERIC(38) NOT NULL,
                 endereco_entrega VARCHAR(512) NOT NULL,
                 status VARCHAR(15) NOT NULL,
-                CONSTRAINT envio_id PRIMARY KEY (envio_id)
+                CONSTRAINT envios_envio_id_pk PRIMARY KEY (envio_id)
 );
 
 -- Comando para adicionar um comentário na tabela "envios" para explicar o que há nela.
@@ -286,7 +286,7 @@ COMMENT ON COLUMN lojas.envios.status IS 'Mostra qual é o estado do produto no 
 -- Comando para restringir as opções do status da tabela de "envios".
 
 ALTER TABLE lojas.envios 
-ADD CONSTRAINT check_status CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
+ADD CONSTRAINT envios_status_check CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
 
 -- Comando para criar um relacionamento entre as tabelas "envios" e "clientes", no qual a tabela pai é "clientes" e a tabela filho é "envios".
 
@@ -324,12 +324,12 @@ CREATE TABLE lojas.pedidos (
 -- Comando para restringir as opções do status da tabela de "pedidos".
 
 ALTER TABLE lojas.pedidos
-ADD CONSTRAINT valicacao_status_pedidos CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
+ADD CONSTRAINT pedidos_status_check CHECK (status IN ('CANCELADO', 'COMPLETO', 'ABERTO', 'PAGO', 'REEMBOLSADO', 'ENVIADO'));
 
 -- Comando para restringir o formato em que é adicionada a data.
 
 ALTER TABLE lojas.pedidos
-ADD CONSTRAINT check_data_hora_format CHECK (TO_CHAR(data_hora, 'DD-MM-YYYY') = TO_CHAR(data_hora, 'DD-MM-YYYY'));
+ADD CONSTRAINT pedidos_data_hora_check CHECK (TO_CHAR(data_hora, 'DD-MM-YYYY') = TO_CHAR(data_hora, 'DD-MM-YYYY'));
 
 -- Comando para adicionar comentário na tabela "pedidos", explicando o que há nela.
 
@@ -393,12 +393,12 @@ COMMENT ON COLUMN lojas.pedidos_itens.envio_id IS 'Mostra o identificador único
 -- Comando para restringir a coluna "preco_unitario" para que não aceite valores negativos.
 
 ALTER TABLE lojas.pedidos_itens
-ADD CONSTRAINT validacao_preco_unitario_positivo CHECK (preco_unitario >= 0);
+ADD CONSTRAINT pedidos_itens_preco_unitario_check CHECK (preco_unitario >= 0);
 
 -- Comando para restringir a coluna "quantidade" para que não aceite valores negativos.
 
 ALTER TABLE lojas.pedidos_itens
-ADD CONSTRAINT validacao_quantidade_positiva CHECK (quantidade >= 0);
+ADD CONSTRAINT pedidos_itens_quantidade_check CHECK (quantidade >= 0);
 
 -- Comando para criar um relacionamento entre as tabelas "pedidos_itens" e "produtos", no qual a tabela filho é "pedidos_itens" e a tabela pai é "produtos".
 
